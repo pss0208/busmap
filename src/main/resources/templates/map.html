@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+    <title>실시간 버스 위치 확인</title>
+    <script type="text/javascript" src="https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=leagsu7haf"></script>
+    <script src="https://code.jquery.com/jquery-latest.js"></script>
+</head>
+<body>
+<div id="map" style="width:100%;height:600px;"></div>
+
+<script th:inline="javascript" >
+var mapOptions = {
+    center: new naver.maps.LatLng(37.504875, 126.939053),
+    zoom: 11
+};
+
+var map = new naver.maps.Map('map', mapOptions);
+
+var routeId=[[${routeId}]]
+
+function searchBus(){
+$.ajax({
+    url : '/busInformation',
+    type : "GET",
+    data : {data : routeId},
+    dataType : "text",
+    success : function(data){
+
+        if(data){
+            map=new naver.maps.Map('map',mapOptions);
+
+<!--타임라인 for문으로 infoList 돌려서 gpsX,gpsY 찍기-->
+
+
+
+
+            <!--$(data).find('itemList').each(function(){
+
+                if($(this).find("isrunyn").text()==1){
+                var gpsX=$(this).find("gpsX").text();
+                var gpsY=$(this).find("gpsY").text();
+
+                var marker=new naver.maps.Marker({
+                    position: new naver.maps.LatLng(gpsY,gpsX),
+                    map: map
+                });
+                }
+            });-->
+        }
+
+    },
+    error: function(data){
+        alert("에러에러ㅔ어ㅔ러레ㅓㅔ어러러러ㅔ어ㅔㄹ");
+    }
+
+});
+}
+
+var start=searchBus();
+var set=setInterval(searchBus,10000);
+
+
+</script>
+</body>
+</html>
