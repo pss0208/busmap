@@ -21,35 +21,35 @@ var map = new naver.maps.Map('map', mapOptions);
 
 var routeId=[[${routeId}]]
 
+
 function searchBus(){
 $.ajax({
     url : '/busInformation',
     type : "GET",
     data : {data : routeId},
-    dataType : "text",
+    dataType : "json",
     success : function(data){
-
+        console.log("성공");
+        console.log(data);
+        console.log(data[0]);
         if(data){
+
+
             map=new naver.maps.Map('map',mapOptions);
 
-<!--타임라인 for문으로 infoList 돌려서 gpsX,gpsY 찍기-->
 
+// array로 데이터는 넘어오니 for 문만 정리하면 됨.
 
-
-
-            <!--$(data).find('itemList').each(function(){
-
-                if($(this).find("isrunyn").text()==1){
-                var gpsX=$(this).find("gpsX").text();
-                var gpsY=$(this).find("gpsY").text();
+            for(var i=0;data.length();i++){
+                var gpsX=data[i].gpsX;
+                var gpsY=data[i].gpsY;
 
                 var marker=new naver.maps.Marker({
                     position: new naver.maps.LatLng(gpsY,gpsX),
                     map: map
-                });
-                }
-            });-->
-        }
+            });
+            };
+        };
 
     },
     error: function(data){
@@ -66,3 +66,16 @@ var set=setInterval(searchBus,10000);
 </script>
 </body>
 </html>
+<!--var infoList=[[${infoList}]]-->
+<!--$(data).find('itemList').each(function(){
+
+                if($(this).find("isrunyn").text()==1){
+                var gpsX=$(this).find("gpsX").text();
+                var gpsY=$(this).find("gpsY").text();
+
+                var marker=new naver.maps.Marker({
+                    position: new naver.maps.LatLng(gpsY,gpsX),
+                    map: map
+                });
+                }
+            });-->

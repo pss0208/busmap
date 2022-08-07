@@ -18,7 +18,7 @@ public class Bus {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "seq")
-    private Long id;
+    private Long seq;
 
     @Column
     private String busNum;
@@ -26,8 +26,12 @@ public class Bus {
     @Column
     private Long routeId;
 
-    @OneToMany(mappedBy = "bus")
+    @OneToMany(mappedBy = "bus",cascade = CascadeType.ALL)
     private List<Info> info=new ArrayList<>();
+
+    public Bus(Long routeId){
+        this.routeId=routeId;
+    }
 
     public Bus(String busNum, Long routeId){
         this.busNum=busNum;
