@@ -47,18 +47,18 @@ public class BusmapCotroller {
             Bus bus = busRepository.findByBusNum(busNum);
             System.out.println(busNum);
             if (bus != null) {
+                model.addAttribute("busNum",busNum);
                 model.addAttribute("routeId", bus.getRouteId());
                 return "map";
             } else {
                 return "error";
             }
-
     }
 
     @ResponseBody
-    @RequestMapping(value = "/busInformation", method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
-    public List busInformation(@RequestParam("data") Long routeId, Model model) throws IOException, SAXException, ParserConfigurationException {
-        System.out.println(routeId);
+    @RequestMapping(value = "/busInformation", method = RequestMethod.GET, produces = "application/text; charset=UTF-8")
+    public String busInformation(@RequestParam("data") Long routeId, Model model) throws IOException, SAXException, ParserConfigurationException {
+//        System.out.println(routeId);
 
         Bus bus=busRepository.findByRouteId(routeId);
 
@@ -68,13 +68,8 @@ public class BusmapCotroller {
         urlBuilder.append("&" + URLEncoder.encode("busRouteId","UTF-8") + "=" + URLEncoder.encode(routeId.toString(), "UTF-8"));
 
         List infoList=new ArrayList<>();
-        double[] busarr=new double[2];
-        Info info;
-//        Info busInfo;
         StringBuilder sb = new StringBuilder();
-        JSONObject json=new JSONObject();
-        JSONObject jsonObject=new JSONObject();
-        List jsonList=new ArrayList();
+        sb.append("<msgBody>");
         try{
             DocumentBuilderFactory dbf=DocumentBuilderFactory.newInstance();
             DocumentBuilder db=dbf.newDocumentBuilder();
@@ -93,102 +88,20 @@ public class BusmapCotroller {
                     String numberPlate=eElement.getElementsByTagName("plainNo").item(0).getTextContent();
 
                     infoRepository.save(new Info(busId, gpsX, gpsY, isFull, isrun, numberPlate,bus));
-                    info=infoRepository.findByBusId(busId);
-//                    busInfo=new Info(info.getGpsX(), info.getGpsY());
-//                    busarr[0]=info.getGpsX();
-//                    busarr[1]=info.getGpsY();
-//                    infoList.add(busarr);
+                    Info info=infoRepository.findByBusId(busId);
 
-
-//                    sb.append(
-////                            "{\"itemList\":"+
-//                            "{\"gpsX\":"+info.getGpsX()+","
-//                            +"\"gpsY\":"+info.getGpsY()+"},"
-////                            +"}"
-//                    );
-                    json.clear();
-                    json.put("gpsX",info.getGpsX());
-                    json.put("gpsY",info.getGpsY());
-//                    jsonObject.put("itemList"+i,json);
-                    jsonList.add(json);
-
+                    sb.append(
+                            "<itemList><gpsX>"+info.getGpsX()+"</gpsX><gpsY>"+info.getGpsY()+"</gpsY></itemList>"
+                    );
                 }
             }
         }catch(IOException e){
             System.out.print(e);
         }
 
-//        JSONParser parser=new JSONParser();
-//        JSONObject jsonObject = (JSONObject) parser.parse(sb.toString());
-
+        sb.append("</msgBody>");
 //        System.out.println(sb.toString());
-
-//        JSONObject jsonObject=new JSONObject(sb.toString());
-
-        System.out.println(jsonList);
-//        model.addAttribute("json",jsonObject);
-        return jsonList;
-    }
-
-
-    @ResponseBody
-    @RequestMapping(value = "/busInformationTest", method = RequestMethod.GET, produces = "application/text; charset=UTF-8")
-    public String busInformationTest(@RequestParam("data") Long routeId, Locale locale, Model model) throws IOException, SAXException, ParserConfigurationException {
-//        System.out.println(routeId);
-
-//        Bus bus=busRepository.findByRouteId(routeId);
-
-        StringBuilder urlBuilder=new StringBuilder("http://ws.bus.go.kr/api/rest/buspos/getBusPosByRtid");
-
-        urlBuilder.append("?" + URLEncoder.encode("serviceKey","UTF-8") + "=zMk5MK0KknH99XjaikHWP0dGVbZj7OLk2GdBuj2okFJ867rV9c9Do7tkHqDq33pij2Vc9CcWgoHoxy4eaS6NUg%3D%3D");
-        urlBuilder.append("&" + URLEncoder.encode("busRouteId","UTF-8") + "=" + URLEncoder.encode(routeId.toString(), "UTF-8"));
-        URL url = new URL(urlBuilder.toString());
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        conn.setRequestMethod("GET");
-        conn.setRequestProperty("Content-type", "application/xml; charset=UTF-8");
-
-
-        BufferedReader rd;
-        if(conn.getResponseCode() >= 200 && conn.getResponseCode() <= 300) {
-            rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-        } else {
-            rd = new BufferedReader(new InputStreamReader(conn.getErrorStream()));
-        }
-        StringBuilder sb = new StringBuilder();
-        String line;
-        while ((line = rd.readLine()) != null) {
-            sb.append(line);
-        }
-        rd.close();
-        conn.disconnect();
-//        System.out.println(sb.toString().indexOf("gpsX"));
-//        System.out.println(sb.toString().indexOf("gpsY"));
-        System.out.println(sb.toString());
         return sb.toString();
-
-
-
     }
 
-//        URL url = new URL(urlBuilder.toString());
-//        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-//        conn.setRequestMethod("GET");
-//        conn.setRequestProperty("Content-type", "application/xml; charset=UTF-8");
-//
-//
-//        BufferedReader rd;
-//        if(conn.getResponseCode() >= 200 && conn.getResponseCode() <= 300) {
-//            rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-//        } else {
-//            rd = new BufferedReader(new InputStreamReader(conn.getErrorStream()));
-//        }
-//        StringBuilder sb = new StringBuilder();
-//        String line;
-//        while ((line = rd.readLine()) != null) {
-//            sb.append(line);
-//        }
-//        rd.close();
-//        conn.disconnect();
-//        return sb.toString();
-
-    }
+}

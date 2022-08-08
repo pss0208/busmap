@@ -35,7 +35,7 @@ public class DBTest {
 
     @Test
     public void insertDB() throws IOException, CsvValidationException {
-        CSVReader cr=new CSVReader(new FileReader("D:/pss/BusRouteId.csv"));
+        CSVReader cr=new CSVReader(new FileReader("C:/Users/pss/BusRouteId.csv"));
         String[] line;
         while((line=cr.readNext())!=null){
             busRepository.save(new Bus(line[0],Long.parseLong(line[1])));
