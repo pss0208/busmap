@@ -32,8 +32,6 @@ $.ajax({
     dataType : "text",
     success : function(data){
 
-        if(data){
-
             map=new naver.maps.Map('map',mapOptions);
 
             $(data).find('itemList').each(function(){
@@ -45,13 +43,10 @@ $.ajax({
                     position: new naver.maps.LatLng(gpsY,gpsX),
                     map: map
                 });
-
             });
-        };
-
     },
     error: function(data){
-        alert("에러에러");
+        alert("에러");
     }
 
 });
@@ -62,7 +57,6 @@ var set=setInterval(searchBus,10000);
 
 
 </script>
-<br>
 <h3>조회하고자 하는 서울 버스의 번호를 입력하세요.</h3>
 <form method="post" action="/searchRtId">
     <input type="text" name="busNum">
@@ -71,4 +65,3 @@ var set=setInterval(searchBus,10000);
 
 </body>
 </html>
-

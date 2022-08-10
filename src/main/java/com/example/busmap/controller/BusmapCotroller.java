@@ -9,7 +9,7 @@ import com.example.busmap.repository.InfoRepository;
 //import org.json.simple.JSONObject;
 //import org.json.simple.parser.JSONParser;
 //import org.json.simple.parser.ParseException;
-import org.json.simple.JSONObject;
+//import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -29,9 +29,7 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 @Controller
 public class BusmapCotroller {
@@ -57,19 +55,21 @@ public class BusmapCotroller {
 
     @ResponseBody
     @RequestMapping(value = "/busInformation", method = RequestMethod.GET, produces = "application/text; charset=UTF-8")
-    public String busInformation(@RequestParam("data") Long routeId, Model model) throws IOException, SAXException, ParserConfigurationException {
-//        System.out.println(routeId);
+    public String busInformation(@RequestParam("data") Long routeId, Model model)
+            throws IOException, SAXException, ParserConfigurationException {
 
         Bus bus=busRepository.findByRouteId(routeId);
 
         StringBuilder urlBuilder=new StringBuilder("http://ws.bus.go.kr/api/rest/buspos/getBusPosByRtid");
 
-        urlBuilder.append("?" + URLEncoder.encode("serviceKey","UTF-8") + "=zMk5MK0KknH99XjaikHWP0dGVbZj7OLk2GdBuj2okFJ867rV9c9Do7tkHqDq33pij2Vc9CcWgoHoxy4eaS6NUg%3D%3D");
-        urlBuilder.append("&" + URLEncoder.encode("busRouteId","UTF-8") + "=" + URLEncoder.encode(routeId.toString(), "UTF-8"));
+        urlBuilder.append("?" + URLEncoder.encode("serviceKey","UTF-8")
+                + "=zMk5MK0KknH99XjaikHWP0dGVbZj7OLk2GdBuj2okFJ867rV9c9Do7tkHqDq33pij2Vc9CcWgoHoxy4eaS6NUg%3D%3D");
+        urlBuilder.append("&" + URLEncoder.encode("busRouteId","UTF-8")
+                + "=" + URLEncoder.encode(routeId.toString(), "UTF-8"));
 
-        List infoList=new ArrayList<>();
         StringBuilder sb = new StringBuilder();
         sb.append("<msgBody>");
+
         try{
             DocumentBuilderFactory dbf=DocumentBuilderFactory.newInstance();
             DocumentBuilder db=dbf.newDocumentBuilder();
@@ -93,6 +93,7 @@ public class BusmapCotroller {
                     sb.append(
                             "<itemList><gpsX>"+info.getGpsX()+"</gpsX><gpsY>"+info.getGpsY()+"</gpsY></itemList>"
                     );
+
                 }
             }
         }catch(IOException e){
@@ -100,7 +101,7 @@ public class BusmapCotroller {
         }
 
         sb.append("</msgBody>");
-//        System.out.println(sb.toString());
+
         return sb.toString();
     }
 
