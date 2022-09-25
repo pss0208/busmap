@@ -57,7 +57,7 @@ public class BusmapCotroller {
     @RequestMapping(value = "/busInformation", method = RequestMethod.GET, produces = "application/text; charset=UTF-8")
     public String busInformation(@RequestParam("data") Long routeId, Model model)
             throws IOException, SAXException, ParserConfigurationException {
-
+        System.out.println(routeId);
         Bus bus=busRepository.findByRouteId(routeId);
 
         StringBuilder urlBuilder=new StringBuilder("http://ws.bus.go.kr/api/rest/buspos/getBusPosByRtid");
@@ -66,7 +66,6 @@ public class BusmapCotroller {
                 + "=zMk5MK0KknH99XjaikHWP0dGVbZj7OLk2GdBuj2okFJ867rV9c9Do7tkHqDq33pij2Vc9CcWgoHoxy4eaS6NUg%3D%3D");
         urlBuilder.append("&" + URLEncoder.encode("busRouteId","UTF-8")
                 + "=" + URLEncoder.encode(routeId.toString(), "UTF-8"));
-
         StringBuilder sb = new StringBuilder();
         sb.append("<msgBody>");
 
@@ -78,6 +77,7 @@ public class BusmapCotroller {
             NodeList nList=document.getElementsByTagName("itemList");
             for(int i=0;i<nList.getLength();i++){
                 Node nNode=nList.item(i);
+                System.out.println(nNode);
                 if(nNode.getNodeType() == Node.ELEMENT_NODE){
                     Element eElement = (Element) nNode;
                     Long busId=Long.parseLong(eElement.getElementsByTagName("vehId").item(0).getTextContent());
